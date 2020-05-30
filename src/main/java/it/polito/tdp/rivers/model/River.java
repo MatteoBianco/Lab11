@@ -1,6 +1,7 @@
 package it.polito.tdp.rivers.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class River {
@@ -34,14 +35,6 @@ public class River {
 		this.name = name;
 	}
 	
-	public double getFlowAvg() {
-		return flowAvg;
-	}
-
-	public void setFlowAvg(double flowAvg) {
-		this.flowAvg = flowAvg;
-	}
-
 	public void setFlows(List<Flow> flows) {
 		this.flows = flows;
 	}
@@ -77,5 +70,23 @@ public class River {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+	
+	public Flow getFirstFlow() {
+		Collections.sort(this.flows, new ComparatorFlowsForDate());
+		return this.flows.get(0);
+	}
+	
+	public Flow getLastFlow() {
+		Collections.sort(this.flows, new ComparatorFlowsForDate());
+		return this.flows.get(this.flows.size() - 1);
+	}
+	
+	public Double getAvg() {
+		Double media = 0.0;
+		for(Flow f : this.flows) {
+			media += f.getFlow();
+		}
+		return media/this.flows.size();
 	}
 }

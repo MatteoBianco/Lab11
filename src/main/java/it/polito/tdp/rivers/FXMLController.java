@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.rivers.model.Model;
+import it.polito.tdp.rivers.model.River;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,7 +27,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxRiver"
-    private ComboBox<?> boxRiver; // Value injected by FXMLLoader
+    private ComboBox<River> boxRiver; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtStartDate"
     private TextField txtStartDate; // Value injected by FXMLLoader
@@ -47,6 +49,45 @@ public class FXMLController {
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
+    
+    @FXML
+    void doCalcolaDati(ActionEvent event) {
+    	this.txtResult.clear();
+    	if(this.boxRiver.getValue() == null) {
+    		this.txtResult.setText("Selezionare un fiume tra quelli nel menu a tendina\n");
+    		return;
+    	}
+    	River r = this.boxRiver.getValue();
+    	this.txtStartDate.setText(r.getFirstFlow().getDay().toString());
+    	this.txtEndDate.setText(r.getLastFlow().getDay().toString());
+    	this.txtNumMeasurements.setText(Integer.toString(r.getFlows().size()));
+    	this.txtFMed.setText(String.format("%.3f", r.getAvg()));
+    }
+
+    @FXML
+    void doSimula(ActionEvent event) {
+    	this.txtResult.clear();
+    	if(this.boxRiver.getValue() == null) {
+    		this.txtResult.setText("Selezionare un fiume tra quelli nel menu a tendina\n");
+    		return;
+    	}
+    	River river = this.boxRiver.getValue();
+    	Double k;
+    	try {
+    		k = Double.parseDouble(this.txtK.getText());
+    	} catch(NumberFormatException e) {
+    		this.txtResult.setText("Inserire esclusivamente un numero positivo nell'apposito campo!\n");
+    		return;
+    	}
+    	this.model.simulate(river, k);
+    	this.txtResult.appendText(String.format("La capacità media giornaliera "
+    			+ "nel periodo in cui sono state effettuate le misurazioni per il fiume "
+    			+ "selezionato è stata %.3f metri cubi.\n",this.model.getAverageCapacity()));
+    	this.txtResult.appendText("Il numero di giorni in cui "
+    			+ "non era presente acqua in quantità sufficiente per soddisfare la domanda in output "
+    			+ "è stato di "+Integer.toString(this.model.getNotAvailable()) + " giorni.\n");
+    	
+    }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -62,5 +103,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxRiver.getItems().addAll(this.model.getAllRivers().values());
+    	this.model.getAllFlows();
     }
 }

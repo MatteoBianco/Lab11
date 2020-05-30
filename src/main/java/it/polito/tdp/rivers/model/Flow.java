@@ -4,10 +4,10 @@ import java.time.LocalDate;
 
 public class Flow {
 	private LocalDate day;
-	private double flow;
+	private Double flow;
 	private River river;
 
-	public Flow(LocalDate day, double flow, River river) {
+	public Flow(LocalDate day, Double flow, River river) {
 		this.day = day;
 		this.flow = flow;
 		this.river = river;
@@ -21,11 +21,11 @@ public class Flow {
 		this.day = day;
 	}
 
-	public double getFlow() {
+	public Double getFlow() {
 		return flow;
 	}
 
-	public void setFlow(double flow) {
+	public void setFlow(Double flow) {
 		this.flow = flow;
 	}
 
@@ -33,6 +33,9 @@ public class Flow {
 	public String toString() {
 		return "Flow [day=" + day + ", flow=" + flow + ", river=" + river + "]";
 	}
-
+	
+	public Double getFlowInDay() {
+		return this.flow*3600*24;
+	}
 	
 }
